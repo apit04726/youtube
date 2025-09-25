@@ -24,6 +24,7 @@
             --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             --radius: 8px;
             --gradient: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+            --card-gradient: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         }
 
         /* Base Styles */
@@ -125,9 +126,10 @@
         }
 
         .btn-outline:hover {
-             background: var(--dark);
+            background: var(--dark);
             color: white;
         }
+
         .section {
             padding: 100px 0;
             position: relative;
@@ -218,6 +220,49 @@
 
             100% {
                 transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInFromLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInFromRight {
+            0% {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes cardHover {
+            0% {
+                transform: translateY(0) rotate(0);
+            }
+            50% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+            100% {
+                transform: translateY(-5px) rotate(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -468px 0;
+            }
+            100% {
+                background-position: 468px 0;
             }
         }
 
@@ -458,11 +503,12 @@
             color: var(--primary-dark);
         }
 
-        /* Channel Showcase */
+        /* Enhanced Channel Showcase Section */
         .channel-showcase {
-            background-color: var(--secondary);
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
             color: white;
             position: relative;
+            overflow: hidden;
         }
 
         .channel-showcase:before {
@@ -476,6 +522,10 @@
             opacity: 0.1;
         }
 
+        .channel-showcase .section-title {
+            color: white;
+        }
+
         .channel-stats {
             display: flex;
             justify-content: space-around;
@@ -487,6 +537,7 @@
             text-align: center;
             padding: 20px;
             position: relative;
+            animation: fadeInUp 1s ease;
         }
 
         .stat-number {
@@ -495,25 +546,55 @@
             color: var(--primary);
             display: block;
             margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        /* Enhanced Video Grid */
+        .video-grid-container {
+            position: relative;
+            padding: 20px 0;
         }
 
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
+            position: relative;
+            z-index: 2;
         }
 
         .video-card {
-            background: var(--dark);
-            border-radius: var(--radius);
+            background: var(--card-gradient);
+            border-radius: 16px;
             overflow: hidden;
-            transition: var(--transition);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             position: relative;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .video-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0.03) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
         }
 
         .video-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            animation: cardHover 0.6s ease;
+        }
+
+        .video-card:hover:before {
+            opacity: 1;
         }
 
         .video-thumbnail {
@@ -526,11 +607,24 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: var(--transition);
+            transition: transform 0.5s ease;
         }
 
         .video-card:hover .video-thumbnail img {
             transform: scale(1.1);
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
         }
 
         .play-btn {
@@ -546,30 +640,96 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            opacity: 0.9;
-            transition: var(--transition);
+            opacity: 0;
+            transition: all 0.3s ease;
             z-index: 2;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
         }
 
         .video-card:hover .play-btn {
             opacity: 1;
             transform: translate(-50%, -50%) scale(1.1);
-            background: var(--primary-dark);
         }
 
         .video-info {
             padding: 20px;
+            position: relative;
+            z-index: 2;
         }
 
         .video-info h3 {
-            color: white;
+            color: var(--dark);
             margin-bottom: 10px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .video-info p {
-            color: var(--gray);
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
             font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .channel-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Floating elements for channel showcase */
+        .floating-video-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-video-icons div {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.05);
+            animation: float 8s infinite ease-in-out;
+        }
+
+        .floating-video-icons div:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .floating-video-icons div:nth-child(2) {
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-video-icons div:nth-child(3) {
+            bottom: 30%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        .floating-video-icons div:nth-child(4) {
+            bottom: 20%;
+            right: 5%;
+            animation-delay: 6s;
         }
 
         /* CTA Section */
@@ -781,6 +941,40 @@
             }
         }
 
+        /* Pagination Styles */
+        #video-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0 0 0;
+        }
+
+        #video-pagination button {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        #video-pagination button:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        #video-pagination button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        #video-pagination span {
+            font-weight: bold;
+            color: #f6f6f6;
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .hero h1 {
@@ -837,6 +1031,10 @@
 
             .section {
                 padding: 80px 0;
+            }
+
+            .video-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -941,6 +1139,12 @@
 
     <!-- Channel Showcase -->
     <section class="section channel-showcase" id="videos">
+        <div class="floating-video-icons">
+            <div><i class="fas fa-play-circle"></i></div>
+            <div><i class="fas fa-film"></i></div>
+            <div><i class="fas fa-video"></i></div>
+            <div><i class="fas fa-youtube"></i></div>
+        </div>
         <div class="container">
             <h2 class="section-title">Channel <span>Highlights</span></h2>
 
@@ -958,12 +1162,12 @@
                     <span>Total Views</span>
                 </div>
             </div>
-            <div class="video-grid">
-                <!-- Video cards will be loaded dynamically by video-grid.js -->
+            
+            <div class="video-grid-container">
+                <div class="video-grid">
+                    <!-- Video cards will be loaded dynamically by video-grid.js -->
+                </div>
             </div>
-
-
-
         </div>
     </section>
 
@@ -1157,10 +1361,203 @@
                 loginError.style.display = 'block';
             }
         });
-    </script>
 
-    <!-- Removed duplicate script to prevent variable redeclaration errors -->
+        // Enhanced video card hover effects
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // video-grid.js - Loads and displays videos from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const grid = document.querySelector('.video-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            // Sample videos data (in a real app, this would come from localStorage)
+            const videos = [
+                {
+                    title: "How to Grow Your YouTube Channel in 2023 - Proven Strategies",
+                    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                },
+                {
+                    title: "YouTube SEO Masterclass: Rank Your Videos Higher in Search",
+                    url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
+                },
+                {
+                    title: "Best Video Editing Software for Beginners - Complete Comparison",
+                    url: "https://www.youtube.com/watch?v=JGwWNGJdvx8"
+                },
+                {
+                    title: "How to Create Engaging Thumbnails That Get More Clicks",
+                    url: "https://www.youtube.com/watch?v=KQ6zr6kCPj8"
+                },
+                {
+                    title: "Monetization Strategies: How to Make Money on YouTube",
+                    url: "https://www.youtube.com/watch?v=fJ9rUzIMcZQ"
+                },
+                {
+                    title: "Building a Community: How to Engage With Your Audience",
+                    url: "https://www.youtube.com/watch?v=NU9JoFKlaZ0"
+                }
+            ];
+            
+            // If localStorage has videos, use them instead
+            const storedVideos = JSON.parse(localStorage.getItem('videos') || '[]');
+            if (storedVideos.length > 0) {
+                videos.length = 0;
+                videos.push(...storedVideos);
+            }
+            
+            if (videos.length === 0) {
+                grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">No videos added yet.</p>';
+                return;
+            }
+            
+            function getYouTubeId(url) {
+                // Extract YouTube video ID from various formats
+                let match = url.match(/(?:youtu.be\/|youtube.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
+                return match ? match[1] : null;
+            }
+            
+            function getThumbnailUrl(id) {
+                return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+            }
+            
+            function getWatchUrl(id) {
+                return `https://www.youtube.com/watch?v=${id}`;
+            }
+
+            let currentPage = 0;
+            const videosPerPage = 6;
+
+            function renderVideos() {
+                grid.innerHTML = '';
+                const start = currentPage * videosPerPage;
+                const end = Math.min(start + videosPerPage, videos.length);
+                
+                for (let idx = start; idx < end; idx++) {
+                    const video = videos[idx];
+                    const id = getYouTubeId(video.url);
+                    const card = document.createElement('div');
+                    card.className = 'video-card animate-on-scroll';
+                    
+                    if (id) {
+                        card.innerHTML = `
+                            <div class="video-thumbnail">
+                                <img src="${getThumbnailUrl(id)}" alt="${video.title}">
+                                <div class="video-duration">10:25</div>
+                                <div class="play-btn">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                            </div>
+                            <div class="video-info">
+                                <h3>${video.title}</h3>
+                                <div class="video-meta">
+                                    <div class="channel-info">
+                                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Channel Icon" class="channel-icon">
+                                        <span>ChannelPro</span>
+                                    </div>
+                                    <div class="video-stats">
+                                        125K views • 2 days ago
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add click event to open YouTube video
+                        card.addEventListener('click', function() {
+                            window.open(getWatchUrl(id), '_blank');
+                        });
+                    } else {
+                        card.innerHTML = `
+                            <div class="video-thumbnail" style="background:#333;display:flex;align-items:center;justify-content:center;color:#fff;">
+                                <i class="fas fa-video" style="font-size: 3rem;"></i>
+                            </div>
+                            <div class="video-info">
+                                <h3>${video.title}</h3>
+                                <div class="video-meta">
+                                    <div class="channel-info">
+                                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Channel Icon" class="channel-icon">
+                                        <span>ChannelPro</span>
+                                    </div>
+                                    <div class="video-stats">
+                                        No preview available
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    grid.appendChild(card);
+                }
+                
+                // Trigger animation for newly added cards
+                setTimeout(() => {
+                    animateOnScroll();
+                }, 100);
+                
+                updatePagination();
+            }
+
+            function updatePagination() {
+                let nav = document.getElementById('video-pagination');
+                if (!nav) {
+                    nav = document.createElement('div');
+                    nav.id = 'video-pagination';
+                    nav.style.display = 'flex';
+                    nav.style.justifyContent = 'center';
+                    nav.style.alignItems = 'center';
+                    nav.style.gap = '16px';
+                    nav.style.margin = '24px 0 0 0';
+                    grid.parentNode.appendChild(nav);
+                }
+                
+                nav.innerHTML = '';
+                const totalPages = Math.ceil(videos.length / videosPerPage);
+                
+                const prevBtn = document.createElement('button');
+                prevBtn.textContent = 'Prev';
+                prevBtn.className = 'btn';
+                prevBtn.disabled = currentPage === 0;
+                prevBtn.onclick = function() {
+                    if (currentPage > 0) {
+                        currentPage--;
+                        renderVideos();
+                    }
+                };
+                
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'Next';
+                nextBtn.className = 'btn';
+                nextBtn.disabled = currentPage >= totalPages - 1;
+                nextBtn.onclick = function() {
+                    if (currentPage < totalPages - 1) {
+                        currentPage++;
+                        renderVideos();
+                    }
+                };
+                
+                const pageInfo = document.createElement('span');
+                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages}`;
+                pageInfo.style.fontWeight = 'bold';
+                pageInfo.style.color = '#f6f6f6';
+                
+                nav.appendChild(prevBtn);
+                nav.appendChild(pageInfo);
+                nav.appendChild(nextBtn);
+            }
+
+            // Initial render
+            currentPage = 0;
+            renderVideos();
+        });
+    </script>
 </body>
 
 </html>
-<script src="video-grid.js"></script>
