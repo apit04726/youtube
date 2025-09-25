@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Video Manager</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Admin Panel: Add Video</h1>
+        <form id="videoForm">
+            <label for="videoTitle">Video Title:</label>
+            <input type="text" id="videoTitle" name="videoTitle" required>
+
+            <label for="videoUrl">Video URL (YouTube embed link):</label>
+            <input type="url" id="videoUrl" name="videoUrl" required>
+
+            <button type="submit">Add Video</button>
+        </form>
+        <h2>Current Videos</h2>
+        <ul id="videoList"></ul>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>
