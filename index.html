@@ -515,6 +515,7 @@
                     <li><a href="#videos">Videos</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
+                    <li><button id="adminLoginBtn" class="btn btn-outline" style="margin-left:20px;">Admin Login</button></li>
                 </ul>
                 <div class="hamburger">
                     <i class="fas fa-bars"></i>
@@ -602,6 +603,25 @@
 
     <!-- Footer -->
     <footer id="contact">
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" style="display:none;position:fixed;z-index:2000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
+        <div style="background:#fff;padding:32px 24px;border-radius:12px;min-width:320px;box-shadow:0 4px 24px rgba(0,0,0,0.18);position:relative;">
+            <button id="closeLoginModal" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.2rem;cursor:pointer;">&times;</button>
+            <h2 style="margin-bottom:18px;">Admin Login</h2>
+            <form id="adminLoginForm" autocomplete="off">
+                <div style="margin-bottom:14px;">
+                    <label for="adminName">Name</label><br>
+                    <input type="text" id="adminName" name="adminName" required style="width:100%;padding:8px;margin-top:4px;border-radius:6px;border:1px solid #ccc;">
+                </div>
+                <div style="margin-bottom:18px;">
+                    <label for="adminPassword">Password</label><br>
+                    <input type="password" id="adminPassword" name="adminPassword" required style="width:100%;padding:8px;margin-top:4px;border-radius:6px;border:1px solid #ccc;">
+                </div>
+                <button type="submit" class="btn" style="width:100%;">Login</button>
+                <div id="loginError" style="color:#c00;margin-top:10px;display:none;font-size:0.95rem;"></div>
+            </form>
+        </div>
+    </div>
     <script src="video-grid.js"></script>
         <div class="container">
             <div class="footer-content">
@@ -658,6 +678,41 @@
         // Mobile Menu Toggle
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
+        // Admin Login Modal Logic
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const loginError = document.getElementById('loginError');
+
+        // Show modal
+        adminLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            adminLoginModal.style.display = 'flex';
+            loginError.style.display = 'none';
+            adminLoginForm.reset();
+        });
+        // Hide modal
+        closeLoginModal.addEventListener('click', () => {
+            adminLoginModal.style.display = 'none';
+        });
+        // Hide modal on outside click
+        adminLoginModal.addEventListener('click', (e) => {
+            if (e.target === adminLoginModal) adminLoginModal.style.display = 'none';
+        });
+        // Simple login validation (example: name: admin, password: channelpro123)
+        adminLoginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('adminName').value.trim();
+            const pass = document.getElementById('adminPassword').value;
+            // Updated credentials: name: jaydip, password: 111111
+            if (name === 'jaydip' && pass === '111111') {
+                window.location.href = 'admin.html';
+            } else {
+                loginError.textContent = 'Invalid name or password.';
+                loginError.style.display = 'block';
+            }
+        });
         
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
