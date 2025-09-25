@@ -1,78 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <!-- Font Awesome for social icons (official CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta charset="UTF-8">
-    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChannelPro | Grow Your YouTube Audience</title>
-    <title>Dynamic Video Gallery</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f6fb;
-            margin: 0;
-            padding: 0;
-        }
-        .gallery-container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            padding: 32px 24px;
-        }
-        h1 {
-            color: #2d3a4b;
-            margin-bottom: 24px;
-        }
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-            background: #181818;
-            padding: 32px 16px;
-            border-radius: 16px;
-        }
-        .video-card {
-            background: #222;
-            border-radius: 12px;
-            padding: 12px 12px 18px 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .video-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.1rem;
-            color: #fff;
-            text-align: center;
-        }
-        .video-card iframe {
-            width: 100%;
-            height: 200px;
-            border: none;
-            border-radius: 8px;
-        }
-    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap"
+        rel="stylesheet">
     <style>
         /* CSS Variables for consistent theming */
-    :root {
-        --primary: #FF0000;
-        --primary-dark: #CC0000;
-    }
-    :root {
-        --primary: #FF0000;
-        --primary-dark: #CC0000;
-        --secondary: #282828;
-        --light: #f9f9f9;
-        --dark: #121212;
-        --gray: #aaaaaa;
-        --transition: all 0.3s ease;
-        --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        --radius: 8px;
-    }
+        :root {
+            --primary: #FF0000;
+            --primary-dark: #CC0000;
+            --secondary: #282828;
+            --light: #f9f9f9;
+            --dark: #121212;
+            --gray: #aaaaaa;
+            --transition: all 0.3s ease;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+            --gradient: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+        }
 
         /* Base Styles */
         * {
@@ -86,13 +38,18 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Poppins', sans-serif;
             line-height: 1.6;
             color: var(--dark);
             background-color: var(--light);
+            overflow-x: hidden;
         }
 
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Montserrat', sans-serif;
             font-weight: 700;
             line-height: 1.2;
             margin-bottom: 1rem;
@@ -127,7 +84,7 @@
         .btn {
             display: inline-block;
             padding: 12px 30px;
-            background-color: var(--primary);
+            background: var(--gradient);
             color: white;
             border: none;
             border-radius: var(--radius);
@@ -135,47 +92,160 @@
             cursor: pointer;
             transition: var(--transition);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .btn:hover:before {
+            left: 100%;
         }
 
         .btn:hover {
-            background-color: var(--primary-dark);
             transform: translateY(-3px);
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.2);
         }
 
         .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--primary);
+            background: white;
             color: var(--primary);
+            border: 2px solid var(--primary);
         }
 
         .btn-outline:hover {
-            background-color: var(--primary);
+             background: var(--dark);
             color: white;
         }
-
         .section {
-            padding: 80px 0;
+            padding: 100px 0;
+            position: relative;
         }
 
         .section-title {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
             font-size: 2.5rem;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
         }
 
         .section-title span {
             color: var(--primary);
         }
 
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* Header Styles */
         header {
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.95);
             box-shadow: var(--shadow);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
         .navbar {
@@ -187,12 +257,20 @@
 
         .logo {
             font-size: 1.8rem;
-            font-weight: 700;
+            font-weight: 900;
             color: var(--primary);
+            display: flex;
+            align-items: center;
         }
 
         .logo span {
             color: var(--secondary);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+            animation: pulse 2s infinite;
         }
 
         .nav-links {
@@ -234,27 +312,97 @@
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
             color: white;
             text-align: center;
-            padding: 180px 0 100px;
-            margin-top: 70px;
+            padding: 200px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 1;
         }
 
         .hero h1 {
             font-size: 3.5rem;
             margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
         }
 
         .hero p {
             font-size: 1.2rem;
             max-width: 700px;
             margin: 0 auto 30px;
+            animation: fadeInUp 1s ease 0.2s both;
         }
 
         .hero-btns {
             display: flex;
             justify-content: center;
             gap: 15px;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .hero .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        .hero .floating-elements div {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        .hero .floating-elements div:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .hero .floating-elements div:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        .hero .floating-elements div:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        .hero .floating-elements div:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            bottom: 10%;
+            right: 20%;
+            animation-delay: 3s;
         }
 
         /* Features Section */
@@ -266,27 +414,66 @@
 
         .feature-card {
             background: white;
-            padding: 30px;
+            padding: 40px 30px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             text-align: center;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .feature-card:hover:before {
+            transform: scaleX(1);
         }
 
         .feature-card:hover {
             transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
         }
 
         .feature-icon {
             font-size: 3rem;
             color: var(--primary);
             margin-bottom: 20px;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            animation: pulse 1s;
+            color: var(--primary-dark);
         }
 
         /* Channel Showcase */
         .channel-showcase {
             background-color: var(--secondary);
             color: white;
+            position: relative;
+        }
+
+        .channel-showcase:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/dark-matter.png');
+            opacity: 0.1;
         }
 
         .channel-stats {
@@ -299,6 +486,7 @@
         .stat {
             text-align: center;
             padding: 20px;
+            position: relative;
         }
 
         .stat-number {
@@ -306,6 +494,7 @@
             font-weight: 700;
             color: var(--primary);
             display: block;
+            margin-bottom: 10px;
         }
 
         .video-grid {
@@ -319,10 +508,12 @@
             border-radius: var(--radius);
             overflow: hidden;
             transition: var(--transition);
+            position: relative;
         }
 
         .video-card:hover {
-            transform: scale(1.03);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
         }
 
         .video-thumbnail {
@@ -335,6 +526,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .video-card:hover .video-thumbnail img {
+            transform: scale(1.1);
         }
 
         .play-btn {
@@ -352,23 +548,54 @@
             font-size: 1.5rem;
             opacity: 0.9;
             transition: var(--transition);
+            z-index: 2;
         }
 
         .video-card:hover .play-btn {
             opacity: 1;
             transform: translate(-50%, -50%) scale(1.1);
+            background: var(--primary-dark);
         }
 
         .video-info {
             padding: 20px;
         }
 
+        .video-info h3 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .video-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
         /* CTA Section */
         .cta {
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            background: var(--gradient);
             color: white;
             text-align: center;
-            padding: 80px 0;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/diagmonds.png');
+            opacity: 0.1;
+        }
+
+        .cta .container {
+            position: relative;
+            z-index: 1;
         }
 
         .cta h2 {
@@ -381,11 +608,32 @@
             margin: 0 auto 30px;
         }
 
+        .cta .btn {
+            background: white;
+            color: var(--primary);
+        }
+
+        .cta .btn:hover {
+            background: var(--dark);
+            color: white;
+        }
+
         /* Footer */
         footer {
             background-color: var(--dark);
             color: var(--gray);
-            padding: 60px 0 30px;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        footer:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
         }
 
         .footer-content {
@@ -399,6 +647,18 @@
             color: white;
             margin-bottom: 20px;
             font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
         }
 
         .footer-column ul li {
@@ -407,6 +667,7 @@
 
         .footer-column ul li a:hover {
             color: var(--primary);
+            padding-left: 5px;
         }
 
         .social-links {
@@ -438,12 +699,94 @@
             font-size: 0.9rem;
         }
 
+        /* Admin Login Modal */
+        #adminLoginModal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        #adminLoginModal .modal-content {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        #closeLoginModal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        #closeLoginModal:hover {
+            color: var(--primary);
+        }
+
+        #adminLoginForm input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        #adminLoginForm input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+            outline: none;
+        }
+
+        #loginError {
+            color: #ff3333;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Loading Animation */
+        .loader {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .hero h1 {
                 font-size: 2.8rem;
             }
-            
+
             .section-title {
                 font-size: 2rem;
             }
@@ -453,7 +796,7 @@
             .hamburger {
                 display: block;
             }
-            
+
             .nav-links {
                 position: fixed;
                 top: 70px;
@@ -466,25 +809,34 @@
                 justify-content: flex-start;
                 padding-top: 50px;
                 transition: var(--transition);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             }
-            
+
             .nav-links.active {
                 left: 0;
             }
-            
+
             .nav-links li {
                 margin: 15px 0;
             }
-            
+
             .hero-btns {
                 flex-direction: column;
                 align-items: center;
             }
-            
+
             .btn {
                 width: 100%;
                 max-width: 300px;
                 margin-bottom: 10px;
+            }
+
+            .hero {
+                padding: 150px 0 80px;
+            }
+
+            .section {
+                padding: 80px 0;
             }
         }
 
@@ -492,30 +844,41 @@
             .hero h1 {
                 font-size: 2.2rem;
             }
-            
+
             .hero p {
                 font-size: 1rem;
             }
-            
+
             .section {
                 padding: 60px 0;
+            }
+
+            .channel-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat {
+                margin-bottom: 20px;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header>
         <div class="container">
             <nav class="navbar">
-                <a href="#" class="logo">Channel<span>Pro</span></a>
+                <a href="#" class="logo"><i class="fab fa-youtube"></i>Channel<span>Pro</span></a>
                 <ul class="nav-links">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#features">Features</a></li>
                     <li><a href="#videos">Videos</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
-                    <li><button id="adminLoginBtn" class="btn btn-outline" style="margin-left:20px;">Admin Login</button></li>
+                    <li><button id="adminLoginBtn" class="btn btn-outline" style="margin-left:20px;">Admin
+                            Login</button></li>
                 </ul>
                 <div class="hamburger">
                     <i class="fas fa-bars"></i>
@@ -526,9 +889,16 @@
 
     <!-- Hero Section -->
     <section class="hero" id="home">
+        <div class="floating-elements">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <div class="container">
             <h1>Grow Your YouTube Channel Like a Pro</h1>
-            <p>Discover proven strategies to increase subscribers, boost engagement, and maximize your YouTube channel's potential.</p>
+            <p>Discover proven strategies to increase subscribers, boost engagement, and maximize your YouTube channel's
+                potential.</p>
             <div class="hero-btns">
                 <a href="#videos" class="btn">Watch Latest Videos</a>
                 <a href="#subscribe" class="btn btn-outline">Subscribe Now</a>
@@ -541,26 +911,29 @@
         <div class="container">
             <h2 class="section-title">Why <span>Subscribe</span> to Our Channel?</h2>
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card animate-on-scroll">
                     <div class="feature-icon">
                         <i class="fas fa-video"></i>
                     </div>
                     <h3>High-Quality Content</h3>
-                    <p>We produce engaging, well-edited videos on topics that matter to our audience.</p>
+                    <p>We produce engaging, well-edited videos on topics that matter to our audience with professional
+                        production quality.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card animate-on-scroll">
                     <div class="feature-icon">
                         <i class="fas fa-upload"></i>
                     </div>
                     <h3>Regular Uploads</h3>
-                    <p>Consistent content schedule so you always have something new to watch.</p>
+                    <p>Consistent content schedule so you always have something new to watch and learn from our channel.
+                    </p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card animate-on-scroll">
                     <div class="feature-icon">
                         <i class="fas fa-users"></i>
                     </div>
                     <h3>Active Community</h3>
-                    <p>Join our growing community and connect with like-minded people.</p>
+                    <p>Join our growing community and connect with like-minded people who share your passion for content
+                        creation.</p>
                 </div>
             </div>
         </div>
@@ -570,25 +943,27 @@
     <section class="section channel-showcase" id="videos">
         <div class="container">
             <h2 class="section-title">Channel <span>Highlights</span></h2>
-            
+
             <div class="channel-stats">
-                <div class="stat">
+                <div class="stat animate-on-scroll">
                     <span class="stat-number">125K</span>
                     <span>Subscribers</span>
                 </div>
-                <div class="stat">
+                <div class="stat animate-on-scroll">
                     <span class="stat-number">350+</span>
                     <span>Videos</span>
                 </div>
-                <div class="stat">
+                <div class="stat animate-on-scroll">
                     <span class="stat-number">5M</span>
                     <span>Total Views</span>
                 </div>
             </div>
-            
             <div class="video-grid">
                 <!-- Video cards will be loaded dynamically by video-grid.js -->
             </div>
+
+
+
         </div>
     </section>
 
@@ -596,46 +971,28 @@
     <section class="cta" id="subscribe">
         <div class="container">
             <h2>Ready to Join Our Community?</h2>
-            <p>Subscribe to our channel and never miss an update. Be part of our growing family of content creators and enthusiasts.</p>
-            <a href="https://youtube.com" target="_blank" class="btn" style="background: white; color: var(--primary);">Subscribe Now</a>
+            <p>Subscribe to our channel and never miss an update. Be part of our growing family of content creators and
+                enthusiasts.</p>
+            <a href="https://youtube.com" target="_blank" class="btn">Subscribe Now</a>
         </div>
     </section>
 
     <!-- Footer -->
     <footer id="contact">
-    <!-- Admin Login Modal -->
-    <div id="adminLoginModal" style="display:none;position:fixed;z-index:2000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
-        <div style="background:#fff;padding:32px 24px;border-radius:12px;min-width:320px;box-shadow:0 4px 24px rgba(0,0,0,0.18);position:relative;">
-            <button id="closeLoginModal" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.2rem;cursor:pointer;">&times;</button>
-            <h2 style="margin-bottom:18px;">Admin Login</h2>
-            <form id="adminLoginForm" autocomplete="off">
-                <div style="margin-bottom:14px;">
-                    <label for="adminName">Name</label><br>
-                    <input type="text" id="adminName" name="adminName" required style="width:100%;padding:8px;margin-top:4px;border-radius:6px;border:1px solid #ccc;">
-                </div>
-                <div style="margin-bottom:18px;">
-                    <label for="adminPassword">Password</label><br>
-                    <input type="password" id="adminPassword" name="adminPassword" required style="width:100%;padding:8px;margin-top:4px;border-radius:6px;border:1px solid #ccc;">
-                </div>
-                <button type="submit" class="btn" style="width:100%;">Login</button>
-                <div id="loginError" style="color:#c00;margin-top:10px;display:none;font-size:0.95rem;"></div>
-            </form>
-        </div>
-    </div>
-    <script src="video-grid.js"></script>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-column">
                     <h3>ChannelPro</h3>
-                    <p>Helping content creators grow their YouTube channels with proven strategies and engaging content.</p>
+                    <p>Helping content creators grow their YouTube channels with proven strategies and engaging content.
+                    </p>
                     <div class="social-links">
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
                     </div>
                 </div>
-                
+
                 <div class="footer-column">
                     <h3>Quick Links</h3>
                     <ul>
@@ -646,7 +1003,7 @@
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-column">
                     <h3>Categories</h3>
                     <ul>
@@ -657,7 +1014,7 @@
                         <li><a href="#">Community</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-column">
                     <h3>Contact Info</h3>
                     <ul>
@@ -667,17 +1024,98 @@
                     </ul>
                 </div>
             </div>
-            
+
             <div class="copyright">
                 <p>&copy; 2023 ChannelPro. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal">
+        <div class="modal-content">
+            <button id="closeLoginModal">&times;</button>
+            <h2 style="margin-bottom:20px;">Admin Login</h2>
+            <form id="adminLoginForm" autocomplete="off">
+                <div style="margin-bottom:20px;">
+                    <label for="adminName">Name</label>
+                    <input type="text" id="adminName" name="adminName" required>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" name="adminPassword" required>
+                </div>
+                <button type="submit" class="btn" style="width:100%;">Login</button>
+                <div id="loginError"></div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Mobile Menu Toggle
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.querySelector('i').classList.toggle('fa-bars');
+            hamburger.querySelector('i').classList.toggle('fa-times');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                hamburger.querySelector('i').classList.add('fa-bars');
+                hamburger.querySelector('i').classList.remove('fa-times');
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navbar
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Animation on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('animated');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+
         // Admin Login Modal Logic
         const adminLoginBtn = document.getElementById('adminLoginBtn');
         const adminLoginModal = document.getElementById('adminLoginModal');
@@ -692,70 +1130,37 @@
             loginError.style.display = 'none';
             adminLoginForm.reset();
         });
+
         // Hide modal
         closeLoginModal.addEventListener('click', () => {
             adminLoginModal.style.display = 'none';
         });
+
         // Hide modal on outside click
         adminLoginModal.addEventListener('click', (e) => {
             if (e.target === adminLoginModal) adminLoginModal.style.display = 'none';
         });
-        // Simple login validation (example: name: admin, password: channelpro123)
-        adminLoginForm.addEventListener('submit', function(e) {
+
+        // Simple login validation
+        adminLoginForm.addEventListener('submit', function (e) {
             e.preventDefault();
             const name = document.getElementById('adminName').value.trim();
             const pass = document.getElementById('adminPassword').value;
+
             // Updated credentials: name: jaydip, password: 111111
             if (name === 'jaydip' && pass === '111111') {
-                window.location.href = 'admin.html';
+                sessionStorage.setItem('adminLoggedIn', '1');
+                window.open('admin.html', '_blank');
+                adminLoginModal.style.display = 'none';
             } else {
                 loginError.textContent = 'Invalid name or password.';
                 loginError.style.display = 'block';
             }
         });
-        
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            hamburger.querySelector('i').classList.toggle('fa-bars');
-            hamburger.querySelector('i').classList.toggle('fa-times');
-        });
-        
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                hamburger.querySelector('i').classList.add('fa-bars');
-                hamburger.querySelector('i').classList.remove('fa-times');
-            });
-        });
-        
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if(targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if(targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 70,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // Add scroll effect to navbar
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
-            if(window.scrollY > 100) {
-                header.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
-            } else {
-                header.style.boxShadow = 'var(--shadow)';
-            }
-        });
     </script>
+
+    <!-- Removed duplicate script to prevent variable redeclaration errors -->
 </body>
+
 </html>
+<script src="video-grid.js"></script>
