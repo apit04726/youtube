@@ -19,6 +19,7 @@
 <body>
     <!-- Header -->
     <header>
+
         <div class="container">
             <nav class="navbar">
                 <a href="#" class="logo"><i class="fab fa-youtube"></i>Channel<span>Pro</span></a>
@@ -226,7 +227,7 @@
 
             // ======================================================================        
 
-            const channelId = "UCPFdFGaZFDy4j1IpZmyaYPw";
+            const channelId = "UCnhvr3JjSCY6SkAVqdDUIbg";
             fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${apiKey}`)
                 .then(res => res.json())
                 .then(data => {
@@ -375,7 +376,7 @@
 
             // ======================================================================        
 
-            const channelId = "UCPFdFGaZFDy4j1IpZmyaYPw";
+            const channelId = "UCnhvr3JjSCY6SkAVqdDUIbg";
             const videosPerPage = 6;
             let pageTokens = [null]; // First page is null
             let currentPageIndex = 0;
