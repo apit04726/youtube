@@ -35,14 +35,17 @@ document.addEventListener('DOMContentLoaded', function() {
             card.className = 'video-card';
             if (id) {
                 card.innerHTML = `
-                    <a href="${getWatchUrl(id)}" target="_blank" class="video-thumb-wrap" style="position:relative; background:#111; border-radius:8px; overflow:hidden; margin-bottom:10px; display:block; cursor:pointer;">
-                        <img src="${getThumbnailUrl(id)}" alt="${video.title}" style="width:100%;height:200px;object-fit:cover;display:block;">
-                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                            <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="rgba(0,0,0,0.5)"/><polygon points="26,20 48,32 26,44" fill="#fff"/></svg>
+                    <div class="video-thumbnail">
+                        <img src="${getThumbnailUrl(id)}" alt="${video.title}">
+                        <div class="play-btn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+                            <svg width="40" height="40" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="rgba(0,0,0,0.5)"/><polygon points="26,20 48,32 26,44" fill="#fff"/></svg>
                         </div>
-                    </a>
-                    <div class="video-title" style="font-weight:600;font-size:1rem;color:#fff;">${video.title}</div>
+                    </div>
+                    <div class="video-title" style="font-weight:600;font-size:1rem;color:#222;margin-top:10px;">${video.title}</div>
                 `;
+                card.addEventListener('click', function() {
+                    window.open(getWatchUrl(id), '_blank');
+                });
             } else {
                 card.innerHTML = `
                     <div class="video-thumb-wrap" style="background:#333;height:200px;display:flex;align-items:center;justify-content:center;color:#fff;">No preview</div>
