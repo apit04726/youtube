@@ -567,7 +567,7 @@
             background: var(--card-gradient);
             border-radius: 16px;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             position: relative;
             cursor: pointer;
@@ -588,9 +588,8 @@
         }
 
         .video-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            animation: cardHover 0.6s ease;
+            transform: scale(1.04);
+            box-shadow: 0 20px 40px rgba(255, 0, 0, 0.12);
         }
 
         .video-card:hover:before {
@@ -1378,134 +1377,14 @@
             const grid = document.querySelector('.video-grid');
             if (!grid) return;
             grid.innerHTML = '';
-            
-            // Sample videos data (in a real app, this would come from localStorage)
-            const videos = [
-                {
-                    title: "How to Grow Your YouTube Channel in 2023 - Proven Strategies",
-                    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                },
-                {
-                    title: "YouTube SEO Masterclass: Rank Your Videos Higher in Search",
-                    url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-                },
-                {
-                    title: "Best Video Editing Software for Beginners - Complete Comparison",
-                    url: "https://www.youtube.com/watch?v=JGwWNGJdvx8"
-                },
-                {
-                    title: "How to Create Engaging Thumbnails That Get More Clicks",
-                    url: "https://www.youtube.com/watch?v=KQ6zr6kCPj8"
-                },
-                {
-                    title: "Monetization Strategies: How to Make Money on YouTube",
-                    url: "https://www.youtube.com/watch?v=fJ9rUzIMcZQ"
-                },
-                {
-                    title: "Building a Community: How to Engage With Your Audience",
-                    url: "https://www.youtube.com/watch?v=NU9JoFKlaZ0"
-                }
-            ];
-            
-            // If localStorage has videos, use them instead
-            const storedVideos = JSON.parse(localStorage.getItem('videos') || '[]');
-            if (storedVideos.length > 0) {
-                videos.length = 0;
-                videos.push(...storedVideos);
-            }
-            
-            if (videos.length === 0) {
-                grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">No videos added yet.</p>';
-                return;
-            }
-            
-            function getYouTubeId(url) {
-                // Extract YouTube video ID from various formats
-                let match = url.match(/(?:youtu.be\/|youtube.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
-                return match ? match[1] : null;
-            }
-            
-            function getThumbnailUrl(id) {
-                return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-            }
-            
-            function getWatchUrl(id) {
-                return `https://www.youtube.com/watch?v=${id}`;
-            }
 
-            let currentPage = 0;
+            const apiKey = "AIzaSyB54Vas0Z4LRO5juPVyOPspj2vRYN1vqeI";
+            const channelId = "UCPFdFGaZFDy4j1IpZmyaYPw";
             const videosPerPage = 6;
+            let nextPageToken = null;
+            let prevPageTokens = [];
 
-            function renderVideos() {
-                grid.innerHTML = '';
-                const start = currentPage * videosPerPage;
-                const end = Math.min(start + videosPerPage, videos.length);
-                
-                for (let idx = start; idx < end; idx++) {
-                    const video = videos[idx];
-                    const id = getYouTubeId(video.url);
-                    const card = document.createElement('div');
-                    card.className = 'video-card animate-on-scroll';
-                    
-                    if (id) {
-                        card.innerHTML = `
-                            <div class="video-thumbnail">
-                                <img src="${getThumbnailUrl(id)}" alt="${video.title}">
-                                <div class="video-duration">10:25</div>
-                                <div class="play-btn">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="video-info">
-                                <h3>${video.title}</h3>
-                                <div class="video-meta">
-                                    <div class="channel-info">
-                                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Channel Icon" class="channel-icon">
-                                        <span>ChannelPro</span>
-                                    </div>
-                                    <div class="video-stats">
-                                        125K views • 2 days ago
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        // Add click event to open YouTube video
-                        card.addEventListener('click', function() {
-                            window.open(getWatchUrl(id), '_blank');
-                        });
-                    } else {
-                        card.innerHTML = `
-                            <div class="video-thumbnail" style="background:#333;display:flex;align-items:center;justify-content:center;color:#fff;">
-                                <i class="fas fa-video" style="font-size: 3rem;"></i>
-                            </div>
-                            <div class="video-info">
-                                <h3>${video.title}</h3>
-                                <div class="video-meta">
-                                    <div class="channel-info">
-                                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Channel Icon" class="channel-icon">
-                                        <span>ChannelPro</span>
-                                    </div>
-                                    <div class="video-stats">
-                                        No preview available
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    grid.appendChild(card);
-                }
-                
-                // Trigger animation for newly added cards
-                setTimeout(() => {
-                    animateOnScroll();
-                }, 100);
-                
-                updatePagination();
-            }
-
-            function updatePagination() {
+            function renderPagination(hasPrev, hasNext) {
                 let nav = document.getElementById('video-pagination');
                 if (!nav) {
                     nav = document.createElement('div');
@@ -1517,45 +1396,106 @@
                     nav.style.margin = '24px 0 0 0';
                     grid.parentNode.appendChild(nav);
                 }
-                
                 nav.innerHTML = '';
-                const totalPages = Math.ceil(videos.length / videosPerPage);
-                
+
                 const prevBtn = document.createElement('button');
                 prevBtn.textContent = 'Prev';
                 prevBtn.className = 'btn';
-                prevBtn.disabled = currentPage === 0;
+                prevBtn.disabled = !hasPrev;
                 prevBtn.onclick = function() {
-                    if (currentPage > 0) {
-                        currentPage--;
-                        renderVideos();
+                    if (hasPrev) {
+                        // Remove last token and fetch previous page
+                        nextPageToken = prevPageTokens.pop() || null;
+                        fetchVideos(nextPageToken, true);
                     }
                 };
-                
+
                 const nextBtn = document.createElement('button');
                 nextBtn.textContent = 'Next';
                 nextBtn.className = 'btn';
-                nextBtn.disabled = currentPage >= totalPages - 1;
+                nextBtn.disabled = !hasNext;
                 nextBtn.onclick = function() {
-                    if (currentPage < totalPages - 1) {
-                        currentPage++;
-                        renderVideos();
+                    if (hasNext) {
+                        prevPageTokens.push(nextPageToken);
+                        fetchVideos(nextPageToken, false);
                     }
                 };
-                
-                const pageInfo = document.createElement('span');
-                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages}`;
-                pageInfo.style.fontWeight = 'bold';
-                pageInfo.style.color = '#f6f6f6';
-                
+
                 nav.appendChild(prevBtn);
-                nav.appendChild(pageInfo);
                 nav.appendChild(nextBtn);
             }
 
-            // Initial render
-            currentPage = 0;
-            renderVideos();
+            function fetchVideos(pageToken, isPrev) {
+                grid.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:220px;width:100%;grid-column:1/-1;"><div class="loader"></div></div>';
+                let url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${videosPerPage}`;
+                if (pageToken) url += `&pageToken=${pageToken}`;
+
+                fetch(url)
+                  .then(res => res.json())
+                  .then(data => {
+                    // Gather all video IDs for stats fetch
+                    const videoIds = data.items.map(v => v.id.videoId).filter(Boolean);
+                    if (videoIds.length === 0) {
+                        grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">No videos found.</p>';
+                        renderPagination(prevPageTokens.length > 0, false);
+                        return;
+                    }
+                    // Fetch video stats (views, likes)
+                    fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${videoIds.join(',')}&part=statistics`)
+                      .then(res2 => res2.json())
+                      .then(statsData => {
+                        let html = "";
+                        data.items.forEach((video, idx) => {
+                            const videoId = video.id.videoId;
+                            const title = video.snippet.title;
+                            const thumbnail = video.snippet.thumbnails.medium.url;
+                            let views = '', likes = '';
+                            if (statsData.items[idx]) {
+                                views = statsData.items[idx].statistics.viewCount || '';
+                                likes = statsData.items[idx].statistics.likeCount || '';
+                            }
+                            html += `
+                                <div class="video-card animate-on-scroll" style="cursor:pointer; box-shadow: 0 8px 32px rgba(0,0,0,0.12); border-radius: 18px; overflow: hidden; transition: box-shadow 0.3s; background: #fff;">
+                                    <div class="video-thumbnail" style="border-radius: 18px 18px 0 0; overflow: hidden; position: relative;">
+                                        <img src="${thumbnail}" alt="${title}" style="border-radius: 18px 18px 0 0; width: 100%; height: 180px; object-fit: cover;">
+                                        <div class="play-btn" style="background:rgba(255,0,0,0.85);"><i class="fas fa-play"></i></div>
+                                    </div>
+                                    <div class="video-info" style="padding: 18px 18px 12px 18px; background: #fff;">
+                                        <h3 style="font-size:1.15rem; font-weight:600; color:#222; margin-bottom:10px; line-height:1.4;">${title}</h3>
+                                        <div class="video-meta" style="display:flex; justify-content:flex-start; gap:18px; align-items:center; font-size:0.98rem; color:#d32f2f; margin-bottom:8px;">
+                                            <span style="display:flex;align-items:center;gap:5px;"><i class='fas fa-eye'></i> <span style="color:#222;font-weight:500;">${views}</span> views</span>
+                                            <span style="display:flex;align-items:center;gap:5px;"><i class='fas fa-thumbs-up'></i> <span style="color:#222;font-weight:500;">${likes}</span> likes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        grid.innerHTML = html;
+                        setTimeout(() => {
+                            animateOnScroll();
+                        }, 100);
+
+                        // Update tokens for pagination
+                        nextPageToken = data.nextPageToken || null;
+                        renderPagination(prevPageTokens.length > 0, !!nextPageToken);
+                      })
+                      .catch(err2 => {
+                        grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">Failed to load video stats.</p>';
+                        renderPagination(prevPageTokens.length > 0, false);
+                        console.error(err2);
+                      });
+                  })
+                  .catch(err => {
+                    grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">Failed to load videos.</p>';
+                    renderPagination(prevPageTokens.length > 0, false);
+                    console.error(err);
+                  });
+            }
+
+            // Initial fetch
+            prevPageTokens = [];
+            nextPageToken = null;
+            fetchVideos(null, false);
         });
     </script>
 </body>
