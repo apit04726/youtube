@@ -1,3 +1,76 @@
+/* Special Animated Gradient for Footer 'Story by Elleone' */
+.footer-animated-font {
+    font-family: 'Montserrat', 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    background: linear-gradient(90deg, #e62117 0%, #ff9800 50%, #fff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+    position: relative;
+    animation: footerShine 3s linear infinite;
+    display: inline-block;
+}
+
+@keyframes footerShine {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: 200px 0;
+    }
+}
+
+@media (max-width: 900px) {
+    .footer-animated-font {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-animated-font {
+        font-size: 1rem;
+    }
+}
+/* Unique Animated Font for 'Story by Elleone' in Hero Title */
+/* Responsive Animated Font for 'Story by Elleone' in Hero Title */
+.animated-font {
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    background: linear-gradient(90deg, #e62117 0%, #ff9800 50%, #fff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+    position: relative;
+    animation: shine 2.5s linear infinite;
+    display: inline-block;
+}
+
+@media (max-width: 900px) {
+    .container h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .container h1 {
+        font-size: 1.5rem;
+    }
+}
+
+@keyframes shine {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: 200px 0;
+    }
+}
 /* ChannelPro YouTube Project Styles - moved from index.html */
 :root {
     --primary: #FF0000;
@@ -1020,4 +1093,16 @@ footer:before {
     .stat {
         margin-bottom: 20px;
     }
+}
+
+/* Logo CSS */
+.new-logo{
+display: flex; 
+align-items: center;
+ gap: 6px;
+  text-decoration: none;
+}
+
+.logo-img{
+    height: 51px; width: auto;
 }
