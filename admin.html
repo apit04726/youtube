@@ -813,72 +813,55 @@
             // Pagination variables
             const videosPerPage = 5;
             let currentPage = 1;
-            let videos = [];
-
-            // Load videos from backend
-            async function loadVideos() {
-                try {
-                    const res = await fetch('http://localhost:3001/api/videos');
-                    videos = await res.json();
-                    renderVideos();
-                } catch (err) {
-                    showNotification('Failed to load videos from server.', 'error');
-                }
-            }
-
-            async function deleteVideoFromBackend(id) {
-                try {
-                    const res = await fetch(`http://localhost:3001/api/videos/${id}`, { method: 'DELETE' });
-                    if (!res.ok) throw new Error('Failed to delete video');
-                    showNotification('Video deleted successfully!', 'success');
-                    await loadVideos();
-                } catch (err) {
-                    showNotification('Failed to delete video.', 'error');
-                }
-            }
-            loadVideos();
-
+            
+            // Load videos from localStorage
+            let videos = JSON.parse(localStorage.getItem('videos')) || [];
+            
+            // Display existing videos
+            renderVideos();
+            
             // Handle form submission
-            videoForm.addEventListener('submit', async function(e) {
+            videoForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-
+                
                 const title = document.getElementById('videoTitle').value.trim();
                 const url = document.getElementById('videoUrl').value.trim();
-
+                
                 // Basic validation
                 if (!title || !url) {
                     showNotification('Please fill in all fields', 'error');
                     return;
                 }
-
+                
                 // Validate YouTube embed URL
                 if (!url.includes('youtube.com/embed/')) {
                     showNotification('Please enter a valid YouTube embed URL', 'error');
                     return;
                 }
-
-                // Add video to backend
-                try {
-                    const res = await fetch('http://localhost:3001/api/videos', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ title, url })
-                    });
-                    if (!res.ok) {
-                        throw new Error('Failed to add video');
-                    }
-                    const newVideo = await res.json();
-                    videos.unshift(newVideo); // Add to start for latest first
-                    videoForm.reset();
-                    renderVideos();
-                    showNotification('Video added successfully!', 'success');
-                    // Add animation to the new item
-                    const newItem = document.querySelector(`[data-id="${newVideo.id}"]`);
-                    if (newItem) {
-                        newItem.style.animation = 'slideInRight 0.5s ease-out';
-                    }
-                } catch (err) {
-                    showNotification('Failed to add video.', 'error');
+                
+                // Add video to the list
+                const video = {
+                    id: Date.now(),
+                    title: title,
+                    url: url
+                };
+                
+                videos.push(video);
+                localStorage.setItem('videos', JSON.stringify(videos));
+                
+                // Clear form
+                videoForm.reset();
+                
+                // Update UI
+                renderVideos();
+                
+                // Show success message
+                showNotification('Video added successfully!', 'success');
+                
+                // Add animation to the new item
+                const newItem = document.querySelector(`[data-id="${video.id}"]`);
+                if (newItem) {
+                    newItem.style.animation = 'slideInRight 0.5s ease-out';
                 }
             });
             
@@ -891,41 +874,48 @@
                     pagination.innerHTML = '';
                     return;
                 }
-
+                
                 emptyState.style.display = 'none';
-
+                
                 // Calculate pagination
                 const totalPages = Math.ceil(videos.length / videosPerPage);
                 const startIndex = (currentPage - 1) * videosPerPage;
                 const endIndex = Math.min(startIndex + videosPerPage, videos.length);
                 const pageVideos = videos.slice(startIndex, endIndex);
-
+                
                 // Clear the list
                 videoList.innerHTML = '';
-
+                
                 // Add videos for current page
                 pageVideos.forEach(video => {
                     const li = document.createElement('li');
                     li.setAttribute('data-id', video.id);
+                    
                     li.innerHTML = `
                         <div class="video-info">
                             <div class="video-title">${video.title}</div>
                             <div class="video-url">${video.url}</div>
                         </div>
                         <div class="video-actions">
-                            <button class="btn btn-danger delete-btn" data-id="${video.id}"><i class="fas fa-trash"></i> Delete</button>
+                            <button class="btn btn-danger delete-btn" data-id="${video.id}">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
                         </div>
                     `;
-                    li.querySelector('.delete-btn').addEventListener('click', function() {
-                        if (confirm('Are you sure you want to delete this video?')) {
-                            deleteVideoFromBackend(video.id);
-                        }
-                    });
+                    
                     videoList.appendChild(li);
                 });
-
+                
                 // Render pagination controls
                 renderPagination(totalPages);
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        deleteVideo(id);
+                    });
+                });
             }
             
             // Render pagination controls
