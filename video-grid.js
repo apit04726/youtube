@@ -4,11 +4,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const grid = document.querySelector('.video-grid');
     if (!grid) return;
     grid.innerHTML = '';
-    const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-    if (videos.length === 0) {
-        grid.innerHTML = '<p>No videos added yet.</p>';
-        return;
+    let videos = [];
+    let currentPage = 0;
+    const videosPerPage = 6;
+
+    async function loadVideos() {
+        try {
+            const res = await fetch('http://localhost:3001/api/videos');
+            videos = await res.json();
+            renderVideos();
+        } catch (err) {
+            grid.innerHTML = '<p style="color:white;text-align:center;">Failed to load videos from server.</p>';
+        }
     }
+
     function getYouTubeId(url) {
         // Extract YouTube video ID from various formats
         let match = url.match(/(?:youtu.be\/|youtube.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
@@ -21,11 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return `https://www.youtube.com/watch?v=${id}`;
     }
 
-    let currentPage = 0;
-    const videosPerPage = 6;
-
     function renderVideos() {
         grid.innerHTML = '';
+        if (videos.length === 0) {
+            grid.innerHTML = '<p style="color:white;text-align:center;">No videos added yet.</p>';
+            return;
+        }
         const start = currentPage * videosPerPage;
         const end = Math.min(start + videosPerPage, videos.length);
         for (let idx = start; idx < end; idx++) {
@@ -35,18 +45,44 @@ document.addEventListener('DOMContentLoaded', function() {
             card.className = 'video-card';
             if (id) {
                 card.innerHTML = `
-                    <a href="${getWatchUrl(id)}" target="_blank" class="video-thumb-wrap" style="position:relative; background:#111; border-radius:8px; overflow:hidden; margin-bottom:10px; display:block; cursor:pointer;">
-                        <img src="${getThumbnailUrl(id)}" alt="${video.title}" style="width:100%;height:200px;object-fit:cover;display:block;">
-                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                            <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="rgba(0,0,0,0.5)"/><polygon points="26,20 48,32 26,44" fill="#fff"/></svg>
+                    <div class="video-thumbnail" style="position:relative;">
+                        <img src="${getThumbnailUrl(id)}" alt="${video.title}">
+                        <div class="video-duration">10:25</div>
+                        <div class="play-btn"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <h3><a href="${getWatchUrl(id)}" target="_blank" style="color:inherit;text-decoration:none;">${video.title}</a></h3>
+                        <div class="video-meta">
+                            <div class="channel-info">
+                                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Channel Icon" class="channel-icon">
+                                <span>ChannelPro</span>
+                            </div>
+                            <div class="video-stats">125K views • 2 days ago</div>
                         </div>
-                    </a>
-                    <div class="video-title" style="font-weight:600;font-size:1rem;color:#fff;">${video.title}</div>
+                    </div>
                 `;
+                // Click on thumbnail or title opens video
+                card.querySelector('.video-thumbnail').addEventListener('click', function(e) {
+                    window.open(getWatchUrl(id), '_blank');
+                });
+                card.querySelector('h3 a').addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent double open
+                });
             } else {
                 card.innerHTML = `
-                    <div class="video-thumb-wrap" style="background:#333;height:200px;display:flex;align-items:center;justify-content:center;color:#fff;">No preview</div>
-                    <div class="video-title" style="font-weight:600;font-size:1rem;color:#fff;">${video.title}</div>
+                    <div class="video-thumbnail" style="background:#333;display:flex;align-items:center;justify-content:center;color:#fff;height:200px;">
+                        <i class="fas fa-video" style="font-size: 3rem;"></i>
+                    </div>
+                    <div class="video-info">
+                        <h3>${video.title}</h3>
+                        <div class="video-meta">
+                            <div class="channel-info">
+                                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Channel Icon" class="channel-icon">
+                                <span>ChannelPro</span>
+                            </div>
+                            <div class="video-stats">No preview available</div>
+                        </div>
+                    </div>
                 `;
             }
             grid.appendChild(card);
@@ -99,5 +135,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial render
     currentPage = 0;
-    renderVideos();
+    loadVideos();
 });
