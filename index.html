@@ -342,6 +342,21 @@
             document.getElementById('subscribeBtn').innerHTML = '<i class="fab fa-youtube"></i> Subscribe';
             isSubscribed = false;
 
+
+
+            // Redirect to official YouTube video after 27 seconds
+            // if (window.youtubeRedirectTimeout) {
+            //     clearTimeout(window.youtubeRedirectTimeout);
+            //     window.youtubeRedirectTimeout = null;
+            // }
+
+            // window.youtubeRedirectTimeout = setTimeout(function () {
+            //     window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
+            // }, 27000);
+
+            // =======================================================================================
+
+            // new Logic redirection
             // Wait for video to start playing, then redirect after exactly 30 seconds
             function startRedirectTimer() {
                 // Clear any existing timeouts first
@@ -349,7 +364,7 @@
                     clearTimeout(window.youtubeRedirectTimeout);
                 }
 
-                // Set new timeout for exactly 30 seconds (30000 milliseconds)
+                // Set new timeout for exactly 34 seconds (34000 milliseconds)
                 window.youtubeRedirectTimeout = setTimeout(function () {
                     console.log("Redirecting to YouTube after 30 seconds");
                     window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
@@ -375,7 +390,7 @@
                         startRedirectTimer();
                     });
 
-                    // Start after 5 seconds if no interaction (fallback)
+                    // Start after 7 seconds if no interaction (fallback)
                     setTimeout(function () {
                         if (!window.youtubeRedirectTimeout) {
                             startRedirectTimer();
