@@ -382,8 +382,28 @@
             likeBtn.style.background = '#666';
             likeBtn.disabled = true;
 
-            // Show success message
-            alert('Video liked successfully!');
+            // Show beautiful notification
+            showLikeNotification();
+        }
+
+        // Beautiful notification for like
+        function showLikeNotification() {
+            let notif = document.createElement('div');
+            notif.className = 'like-notification';
+            notif.innerHTML = `
+                <div class="notif-content">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Video liked successfully!</span>
+                </div>
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => {
+                notif.classList.add('show');
+            }, 10);
+            setTimeout(() => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 400);
+            }, 2000);
         }
 
         // Subscribe to channel function

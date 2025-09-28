@@ -1711,3 +1711,74 @@ footer:before {
         padding: 10px;
     }
 }
+
+/* like notifection msg  */
+.like-notification {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.95);
+    background: linear-gradient(90deg, #e62117 0%, #ffb347 100%);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    font-size: 1.1rem;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.4s, transform 0.4s;
+    pointer-events: none;
+    max-width: 90vw;
+    min-width: 180px;
+}
+
+.like-notification.show {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+.like-notification .notif-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.like-notification i {
+    font-size: 1.3em;
+    color: #fff;
+    animation: pop 0.6s cubic-bezier(.68, -0.55, .27, 1.55);
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0.5);
+    }
+
+    60% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 600px) {
+    .like-notification {
+        top: 16px;
+        padding: 8px 12px;
+        font-size: 0.95rem;
+        min-width: 120px;
+    }
+
+    .like-notification .notif-content {
+        gap: 7px;
+        font-size: 0.95em;
+    }
+
+    .like-notification i {
+        font-size: 1.1em;
+    }
+}
