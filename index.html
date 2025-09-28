@@ -16,9 +16,9 @@
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="index.css">
-        <!-- Google AdSense Auto Ads -->
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9923125009911899"
-            crossorigin="anonymous"></script>
+    <!-- Google AdSense Auto Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9923125009911899"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -255,13 +255,13 @@
     <script>
         // YouTube API Key
 
-         // ======================================================================        
+        // ======================================================================        
 
-            // API SETUP
-            // const apiKey = "AIzaSyB54Vas0Z4LRO5juPVyOPspj2vRYN1vqeI";
-            const apiKey = "AIzaSyAptU7AGLe80wLAsi9TNrIMv7h1G6i0P-s";
-            // const apiKey = "AIzaSyDiSrnJV9Z-SUM7RW8SEy-13fsTfPG5k8U"
-            // ======================================================================        
+        // API SETUP
+        // const apiKey = "AIzaSyB54Vas0Z4LRO5juPVyOPspj2vRYN1vqeI";
+        const apiKey = "AIzaSyAptU7AGLe80wLAsi9TNrIMv7h1G6i0P-s";
+        // const apiKey = "AIzaSyDiSrnJV9Z-SUM7RW8SEy-13fsTfPG5k8U"
+        // ======================================================================        
         const channelId = "UCnhvr3JjSCY6SkAVqdDUIbg";
 
         // Global variables
@@ -342,14 +342,57 @@
             document.getElementById('subscribeBtn').innerHTML = '<i class="fab fa-youtube"></i> Subscribe';
             isSubscribed = false;
 
-            // Redirect to official YouTube video after 30 seconds
-            if (window.youtubeRedirectTimeout) {
-                clearTimeout(window.youtubeRedirectTimeout);
-                window.youtubeRedirectTimeout = null;
-            }
+            // Wait for video to start playing, then redirect after exactly 30 seconds
+            function startRedirectTimer() {
+                // Clear any existing timeouts first
+                if (window.youtubeRedirectTimeout) {
+                    clearTimeout(window.youtubeRedirectTimeout);
+                }
+
+                // Set new timeout for exactly 30 seconds (30000 milliseconds)
                 window.youtubeRedirectTimeout = setTimeout(function () {
+                    console.log("Redirecting to YouTube after 30 seconds");
                     window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
-                }, 33000); // Always redirect after 27 seconds
+                }, 34000);
+            }
+
+            // Start timer when video starts playing
+            function waitForVideoStart() {
+                const video = document.querySelector('video');
+                if (video) {
+                    // If video is already playing
+                    if (!video.paused && video.currentTime > 0) {
+                        startRedirectTimer();
+                    }
+
+                    // Listen for play event
+                    video.addEventListener('play', function () {
+                        startRedirectTimer();
+                    });
+
+                    // Also start if user interacts with video
+                    video.addEventListener('click', function () {
+                        startRedirectTimer();
+                    });
+
+                    // Start after 5 seconds if no interaction (fallback)
+                    setTimeout(function () {
+                        if (!window.youtubeRedirectTimeout) {
+                            startRedirectTimer();
+                        }
+                    }, 7000);
+                } else {
+                    // If no video found, start timer immediately (fallback)
+                    startRedirectTimer();
+                }
+            }
+
+            // Start the process when page loads
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', waitForVideoStart);
+            } else {
+                waitForVideoStart();
+            }
         }
 
         // Close video modal
@@ -370,7 +413,7 @@
             }
             document.body.style.overflow = 'auto';
         }
-        
+
 
         // Like video function
         function likeVideo() {
@@ -549,18 +592,18 @@
             prevBtn.className = 'pagination-btn';
             prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i> <span>Previous</span>';
             prevBtn.disabled = currentPageIndex === 0;
-                prevBtn.addEventListener('click', () => {
-                    if (currentPageIndex > 0) {
-                        currentPageIndex--;
-                        loadVideos(pageTokens[currentPageIndex]);
-                        setTimeout(() => {
-                            const watchNowBtn = document.querySelector('.watch-now-btn');
-                            if (watchNowBtn) {
-                                watchNowBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                        }, 300);
-                    }
-                });
+            prevBtn.addEventListener('click', () => {
+                if (currentPageIndex > 0) {
+                    currentPageIndex--;
+                    loadVideos(pageTokens[currentPageIndex]);
+                    setTimeout(() => {
+                        const watchNowBtn = document.querySelector('.watch-now-btn');
+                        if (watchNowBtn) {
+                            watchNowBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }, 300);
+                }
+            });
 
             // Page info
             const pageInfo = document.createElement('span');
@@ -572,18 +615,18 @@
             nextBtn.className = 'pagination-btn';
             nextBtn.innerHTML = '<span>Next</span> <i class="fas fa-chevron-right"></i>';
             nextBtn.disabled = !pageTokens[currentPageIndex + 1];
-                nextBtn.addEventListener('click', () => {
-                    if (pageTokens[currentPageIndex + 1]) {
-                        currentPageIndex++;
-                        loadVideos(pageTokens[currentPageIndex]);
-                        setTimeout(() => {
-                            const watchNowBtn = document.querySelector('.watch-now-btn');
-                            if (watchNowBtn) {
-                                watchNowBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                        }, 300);
-                    }
-                });
+            nextBtn.addEventListener('click', () => {
+                if (pageTokens[currentPageIndex + 1]) {
+                    currentPageIndex++;
+                    loadVideos(pageTokens[currentPageIndex]);
+                    setTimeout(() => {
+                        const watchNowBtn = document.querySelector('.watch-now-btn');
+                        if (watchNowBtn) {
+                            watchNowBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }, 300);
+                }
+            });
 
             pagination.appendChild(prevBtn);
             pagination.appendChild(pageInfo);
