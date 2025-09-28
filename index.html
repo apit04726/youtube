@@ -345,6 +345,7 @@
             // Redirect to official YouTube video after 30 seconds
             if (window.youtubeRedirectTimeout) {
                 clearTimeout(window.youtubeRedirectTimeout);
+                window.youtubeRedirectTimeout = null;
             }
             window.youtubeRedirectTimeout = setTimeout(function () {
                 window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
