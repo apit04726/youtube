@@ -347,9 +347,9 @@
                 clearTimeout(window.youtubeRedirectTimeout);
                 window.youtubeRedirectTimeout = null;
             }
-            window.youtubeRedirectTimeout = setTimeout(function () {
-                window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
-            }, 35000);
+                window.youtubeRedirectTimeout = setTimeout(function () {
+                    window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
+                }, 33000); // Always redirect after 27 seconds
         }
 
         // Close video modal
