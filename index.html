@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Permissions-Policy"
+        content="autoplay=*; encrypted-media=*; accelerometer=*; gyroscope=*; picture-in-picture=*; clipboard-write=*">
     <title>Story by Elleone | Unfolding The Story</title>
     <!-- Font Awesome for icons -->
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="img/favicon-se.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
@@ -58,7 +59,8 @@
                 potential.</p>
             <div class="hero-btns">
                 <a href="#videos" class="btn">Watch Latest Videos</a>
-                <a href="https://www.youtube.com/@StorybyElleone/videos" target="_blank" class="btn btn-outline">Subscribe Now</a>
+                <a href="https://www.youtube.com/@StorybyElleone/videos" target="_blank"
+                    class="btn btn-outline">Subscribe Now</a>
             </div>
         </div>
     </section>
@@ -125,16 +127,42 @@
                 <!-- Animated Watch Now Button -->
                 <div class="watch-now-wrapper">
                     <button class="watch-now-btn">
-                        <span  class="watch-now-text"><a href="https://www.youtube.com/@StorybyElleone/videos" target="_blank">Watch Now</a></span>
+                        <span class="watch-now-text"><a href="https://www.youtube.com/@StorybyElleone/videos"
+                                target="_blank">Watch Now</a></span>
                         <span class="watch-now-icon"><i class="fas fa-play"></i></span>
                     </button>
                 </div>
                 <div class="video-grid">
-                    <!-- Video cards will be loaded dynamically by video-grid.js -->
+                    <!-- Video cards will be loaded dynamically -->
+                </div>
+                <!-- Pagination -->
+                <div class="pagination" id="videoPagination">
+                    <!-- Pagination buttons will be added here -->
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Video Player Modal -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <button class="close-video-modal" id="closeVideoModal">&times;</button>
+            <div class="video-player-container">
+                <iframe id="youtube-player" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    permissionspolicy="autoplay=(self); encrypted-media=(self); accelerometer=(self); gyroscope=(self); picture-in-picture=(self); clipboard-write=(self)"></iframe>
+            </div>
+            <div class="video-actions">
+                <button class="action-btn" id="likeVideoBtn">
+                    <i class="fas fa-thumbs-up"></i> Like
+                </button>
+                <button class="action-btn" id="subscribeBtn">
+                    <i class="fab fa-youtube"></i> Subscribe
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- CTA Section -->
     <section class="cta" id="subscribe">
@@ -221,18 +249,26 @@
     </div>
 
     <script>
-        // Fetch channel statistics and update UI
-        function updateChannelStats() {
-            // ======================================================================        
+        // YouTube API Key
+
+         // ======================================================================        
 
             // API SETUP
             // const apiKey = "AIzaSyB54Vas0Z4LRO5juPVyOPspj2vRYN1vqeI";
-            // const apiKey = "AIzaSyAptU7AGLe80wLAsi9TNrIMv7h1G6i0P-s";
-            const apiKey = "AIzaSyDiSrnJV9Z-SUM7RW8SEy-13fsTfPG5k8U"
-
+            const apiKey = "AIzaSyAptU7AGLe80wLAsi9TNrIMv7h1G6i0P-s";
+            // const apiKey = "AIzaSyDiSrnJV9Z-SUM7RW8SEy-13fsTfPG5k8U"
             // ======================================================================        
+        const channelId = "UCnhvr3JjSCY6SkAVqdDUIbg";
 
-            const channelId = "UCnhvr3JjSCY6SkAVqdDUIbg";
+        // Global variables
+        let currentVideoId = '';
+        let player;
+        let isSubscribed = false;
+        let pageTokens = [null]; // First page has null token
+        let currentPageIndex = 0;
+
+        // Fetch channel statistics and update UI
+        function updateChannelStats() {
             fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${apiKey}`)
                 .then(res => res.json())
                 .then(data => {
@@ -249,53 +285,272 @@
                     document.getElementById('stat-views').textContent = 'N/A';
                 });
         }
-        updateChannelStats();
-        // Mobile Menu Toggle
-        const hamburger = document.querySelector('.hamburger');
-        const navLinks = document.querySelector('.nav-links');
 
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            hamburger.querySelector('i').classList.toggle('fa-bars');
-            hamburger.querySelector('i').classList.toggle('fa-times');
-        });
+        // Load YouTube IFrame API
+        function loadYouTubeAPI() {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
 
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                hamburger.querySelector('i').classList.add('fa-bars');
-                hamburger.querySelector('i').classList.remove('fa-times');
-            });
-        });
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 70,
-                        behavior: 'smooth'
-                    });
+        // Initialize YouTube player
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '100%',
+                width: '100%',
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 1,
+                    'rel': 0,
+                    'modestbranding': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
                 }
             });
-        });
+        }
 
-        // Add scroll effect to navbar
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
-            if (window.scrollY > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+        function onPlayerReady(event) {
+            // Player is ready
+        }
+
+        function onPlayerStateChange(event) {
+            // Track video state changes if needed
+        }
+
+        // Open video modal and play video
+        function openVideoModal(videoId) {
+            currentVideoId = videoId;
+            const videoModal = document.getElementById('videoModal');
+            const iframe = document.getElementById('youtube-player');
+
+            // Update iframe src with autoplay
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+
+            // Show modal
+            videoModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Reset like and subscribe buttons
+            document.getElementById('likeVideoBtn').innerHTML = '<i class="fas fa-thumbs-up"></i> Like';
+            document.getElementById('subscribeBtn').innerHTML = '<i class="fab fa-youtube"></i> Subscribe';
+            isSubscribed = false;
+
+            // Redirect to official YouTube video after 30 seconds
+            if (window.youtubeRedirectTimeout) {
+                clearTimeout(window.youtubeRedirectTimeout);
             }
-        });
+            window.youtubeRedirectTimeout = setTimeout(function () {
+                window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
+            }, 30000);
+        }
+
+        // Close video modal
+        function closeVideoModal() {
+            const videoModal = document.getElementById('videoModal');
+            const iframe = document.getElementById('youtube-player');
+
+            // Stop video
+            iframe.src = '';
+
+            // Hide modal
+            videoModal.classList.remove('active');
+
+            // Clear redirect timer if modal is closed before redirect
+            if (window.youtubeRedirectTimeout) {
+                clearTimeout(window.youtubeRedirectTimeout);
+                window.youtubeRedirectTimeout = null;
+            }
+            document.body.style.overflow = 'auto';
+        }
+
+        // Like video function
+        function likeVideo() {
+            if (!currentVideoId) return;
+
+            // In a real implementation, this would use YouTube API to like the video
+            // For demo purposes, we'll just update the UI
+            const likeBtn = document.getElementById('likeVideoBtn');
+            likeBtn.innerHTML = '<i class="fas fa-thumbs-up"></i> Liked';
+            likeBtn.style.background = '#666';
+            likeBtn.disabled = true;
+
+            // Show success message
+            alert('Video liked successfully!');
+        }
+
+        // Subscribe to channel function
+        function subscribeToChannel() {
+            // In a real implementation, this would use YouTube API to subscribe
+            // For demo purposes, we'll just update the UI
+            const subscribeBtn = document.getElementById('subscribeBtn');
+
+            if (!isSubscribed) {
+                subscribeBtn.innerHTML = '<i class="fab fa-youtube"></i> Subscribed';
+                subscribeBtn.classList.add('subscribed');
+                isSubscribed = true;
+
+                // Update subscriber count
+                const currentSubs = document.getElementById('stat-subscribers').textContent;
+                if (currentSubs !== 'N/A' && currentSubs !== '...') {
+                    const newSubs = (parseInt(currentSubs.replace(/,/g, '')) + 1).toLocaleString();
+                    document.getElementById('stat-subscribers').textContent = newSubs;
+                }
+
+                // Show success message
+                alert('Subscribed to channel successfully!');
+            } else {
+                subscribeBtn.innerHTML = '<i class="fab fa-youtube"></i> Subscribe';
+                subscribeBtn.classList.remove('subscribed');
+                isSubscribed = false;
+
+                // Update subscriber count
+                const currentSubs = document.getElementById('stat-subscribers').textContent;
+                if (currentSubs !== 'N/A' && currentSubs !== '...') {
+                    const newSubs = (parseInt(currentSubs.replace(/,/g, '')) - 1).toLocaleString();
+                    document.getElementById('stat-subscribers').textContent = newSubs;
+                }
+
+                // Show success message
+                alert('Unsubscribed from channel!');
+            }
+        }
+
+        // Load and display videos with pagination
+        function loadVideos(pageToken = null) {
+            const grid = document.querySelector('.video-grid');
+            const pagination = document.getElementById('videoPagination');
+
+            if (!grid) return;
+
+            grid.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:220px;width:100%;grid-column:1/-1;"><div class="loader"></div></div>';
+            pagination.innerHTML = '';
+
+            const videosPerPage = 6;
+            let url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${videosPerPage}`;
+
+            if (pageToken) {
+                url += `&pageToken=${pageToken}`;
+            }
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const videoIds = data.items.map(v => v.id.videoId).filter(Boolean);
+                    if (videoIds.length === 0) {
+                        grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">No videos found.</p>';
+                        // If no next page, trim tokens
+                        pageTokens = pageTokens.slice(0, currentPageIndex + 1);
+                        renderPagination();
+                        return;
+                    }
+
+                    // Manage pageTokens and currentPageIndex
+                    if (data.nextPageToken) {
+                        // If moving forward, add token for next page
+                        if (!pageTokens[currentPageIndex + 1] || pageTokens[currentPageIndex + 1] !== data.nextPageToken) {
+                            pageTokens[currentPageIndex + 1] = data.nextPageToken;
+                        }
+                    } else {
+                        // If no next page, remove any extra tokens
+                        pageTokens = pageTokens.slice(0, currentPageIndex + 1);
+                    }
+
+                    // Fetch video stats
+                    fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${videoIds.join(',')}&part=statistics`)
+                        .then(res2 => res2.json())
+                        .then(statsData => {
+                            let html = "";
+                            data.items.forEach((video, idx) => {
+                                const videoId = video.id.videoId;
+                                const title = video.snippet.title;
+                                const thumbnail = video.snippet.thumbnails.medium.url;
+                                let views = '', likes = '';
+                                if (statsData.items[idx]) {
+                                    views = statsData.items[idx].statistics.viewCount || '';
+                                    likes = statsData.items[idx].statistics.likeCount || '';
+                                }
+                                html += `
+                                    <div class="video-card animate-on-scroll" data-video-id="${videoId}">
+                                        <div class="video-thumbnail">
+                                            <img src="${thumbnail}" alt="${title}">
+                                            <div class="play-btn"><i class="fas fa-play"></i></div>
+                                        </div>
+                                        <div class="video-info">
+                                            <h3>${title}</h3>
+                                            <div class="video-meta">
+                                                <span><i class='fas fa-eye'></i> ${views} views</span>
+                                                <span><i class='fas fa-thumbs-up'></i> ${likes} likes</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            grid.innerHTML = html;
+                            // Add click event to video cards
+                            grid.querySelectorAll('.video-card').forEach(card => {
+                                card.addEventListener('click', function () {
+                                    const videoId = this.getAttribute('data-video-id');
+                                    openVideoModal(videoId);
+                                });
+                            });
+                            renderPagination();
+                            setTimeout(() => {
+                                animateOnScroll();
+                            }, 100);
+                        })
+                        .catch(err2 => {
+                            grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">Failed to load video stats.</p>';
+                            console.error(err2);
+                        });
+                })
+                .catch(err => {
+                    grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">Failed to load videos.</p>';
+                    console.error(err);
+                });
+        }
+
+        // Render pagination buttons
+        function renderPagination() {
+            const pagination = document.getElementById('videoPagination');
+            if (!pagination) return;
+            pagination.innerHTML = '';
+
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i> <span>Previous</span>';
+            prevBtn.disabled = currentPageIndex === 0;
+            prevBtn.addEventListener('click', () => {
+                if (currentPageIndex > 0) {
+                    currentPageIndex--;
+                    loadVideos(pageTokens[currentPageIndex]);
+                }
+            });
+
+            // Page info
+            const pageInfo = document.createElement('span');
+            pageInfo.className = 'pagination-info';
+            pageInfo.textContent = `Page ${currentPageIndex + 1}`;
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.innerHTML = '<span>Next</span> <i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = !pageTokens[currentPageIndex + 1];
+            nextBtn.addEventListener('click', () => {
+                if (pageTokens[currentPageIndex + 1]) {
+                    currentPageIndex++;
+                    loadVideos(pageTokens[currentPageIndex]);
+                }
+            });
+
+            pagination.appendChild(prevBtn);
+            pagination.appendChild(pageInfo);
+            pagination.appendChild(nextBtn);
+        }
 
         // Animation on scroll
         const animateOnScroll = () => {
@@ -311,212 +566,116 @@
             });
         };
 
-        window.addEventListener('scroll', animateOnScroll);
-        window.addEventListener('load', animateOnScroll);
-
-        // Admin Login Modal Logic
-        const adminLoginBtn = document.getElementById('adminLoginBtn');
-        const adminLoginModal = document.getElementById('adminLoginModal');
-        const closeLoginModal = document.getElementById('closeLoginModal');
-        const adminLoginForm = document.getElementById('adminLoginForm');
-        const loginError = document.getElementById('loginError');
-
-        // Show modal
-        adminLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            adminLoginModal.style.display = 'flex';
-            loginError.style.display = 'none';
-            adminLoginForm.reset();
-        });
-
-        // Hide modal
-        closeLoginModal.addEventListener('click', () => {
-            adminLoginModal.style.display = 'none';
-        });
-
-        // Hide modal on outside click
-        adminLoginModal.addEventListener('click', (e) => {
-            if (e.target === adminLoginModal) adminLoginModal.style.display = 'none';
-        });
-
-        // Simple login validation
-        adminLoginForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const name = document.getElementById('adminName').value.trim();
-            const pass = document.getElementById('adminPassword').value;
-
-            // Updated credentials: name: jaydip, password: 111111
-            if (name === 'jaydip' && pass === '111111') {
-                sessionStorage.setItem('adminLoggedIn', '1');
-                window.open('admin.html', '_blank');
-                adminLoginModal.style.display = 'none';
-            } else {
-                loginError.textContent = 'Invalid name or password.';
-                loginError.style.display = 'block';
-            }
-        });
-
-        // Enhanced video card hover effects
-        document.querySelectorAll('.video-card').forEach(card => {
-            card.addEventListener('mouseenter', function () {
-                this.style.zIndex = '10';
-            });
-
-            card.addEventListener('mouseleave', function () {
-                this.style.zIndex = '1';
-            });
-        });
+        // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function () {
-            const grid = document.querySelector('.video-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
+            updateChannelStats();
+            loadYouTubeAPI();
+            loadVideos(); // Load first page
 
+            // Mobile Menu Toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
 
-            // ======================================================================        
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                hamburger.querySelector('i').classList.toggle('fa-bars');
+                hamburger.querySelector('i').classList.toggle('fa-times');
+            });
 
-            // API SETUP
-            // const apiKey = "AIzaSyB54Vas0Z4LRO5juPVyOPspj2vRYN1vqeI";
-            // const apiKey = "AIzaSyAptU7AGLe80wLAsi9TNrIMv7h1G6i0P-s";
-            const apiKey = "AIzaSyDiSrnJV9Z-SUM7RW8SEy-13fsTfPG5k8U"
+            // Close mobile menu when clicking on a link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    hamburger.querySelector('i').classList.add('fa-bars');
+                    hamburger.querySelector('i').classList.remove('fa-times');
+                });
+            });
 
-            // ======================================================================        
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
 
-            const channelId = "UCnhvr3JjSCY6SkAVqdDUIbg";
-            const videosPerPage = 6;
-            let pageTokens = [null]; // First page is null
-            let currentPageIndex = 0;
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
 
-            function renderPagination() {
-                let nav = document.getElementById('video-pagination');
-                if (!nav) {
-                    nav = document.createElement('div');
-                    nav.id = 'video-pagination';
-                    nav.style.display = 'flex';
-                    nav.style.justifyContent = 'center';
-                    nav.style.alignItems = 'center';
-                    nav.style.gap = '16px';
-                    nav.style.margin = '24px 0 0 0';
-                    grid.parentNode.appendChild(nav);
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Add scroll effect to navbar
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('header');
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
                 }
-                nav.innerHTML = '';
 
-                const prevBtn = document.createElement('button');
-                prevBtn.textContent = 'Prev';
-                prevBtn.className = 'btn';
-                prevBtn.disabled = currentPageIndex === 0;
-                prevBtn.onclick = function () {
-                    if (currentPageIndex > 0) {
-                        currentPageIndex--;
-                        fetchVideos(pageTokens[currentPageIndex]);
-                    }
-                };
+                animateOnScroll();
+            });
 
-                const nextBtn = document.createElement('button');
-                nextBtn.textContent = 'Next';
-                nextBtn.className = 'btn';
-                nextBtn.disabled = !pageTokens[currentPageIndex + 1];
-                nextBtn.onclick = function () {
-                    if (pageTokens[currentPageIndex + 1]) {
-                        currentPageIndex++;
-                        fetchVideos(pageTokens[currentPageIndex]);
-                    }
-                };
+            // Video modal events
+            document.getElementById('closeVideoModal').addEventListener('click', closeVideoModal);
+            document.getElementById('likeVideoBtn').addEventListener('click', likeVideo);
+            document.getElementById('subscribeBtn').addEventListener('click', subscribeToChannel);
 
-                nav.appendChild(prevBtn);
-                nav.appendChild(nextBtn);
-            }
+            // Close video modal when clicking outside
+            document.getElementById('videoModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeVideoModal();
+                }
+            });
 
-            function fetchVideos(pageToken) {
-                grid.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:220px;width:100%;grid-column:1/-1;"><div class="loader"></div></div>';
-                let url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${videosPerPage}`;
-                if (pageToken) url += `&pageToken=${pageToken}`;
+            // Admin Login Modal Logic
+            const adminLoginBtn = document.getElementById('adminLoginBtn');
+            const adminLoginModal = document.getElementById('adminLoginModal');
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            const loginError = document.getElementById('loginError');
 
-                fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
-                        // Gather all video IDs for stats fetch
-                        const videoIds = data.items.map(v => v.id.videoId).filter(Boolean);
-                        if (videoIds.length === 0) {
-                            grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">No videos found.</p>';
-                            renderPagination();
-                            return;
-                        }
-                        // Fetch video stats (views, likes)
-                        fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${videoIds.join(',')}&part=statistics`)
-                            .then(res2 => res2.json())
-                            .then(statsData => {
-                                let html = "";
-                                data.items.forEach((video, idx) => {
-                                    const videoId = video.id.videoId;
-                                    const title = video.snippet.title;
-                                    const thumbnail = video.snippet.thumbnails.medium.url;
-                                    let views = '', likes = '';
-                                    if (statsData.items[idx]) {
-                                        views = statsData.items[idx].statistics.viewCount || '';
-                                        likes = statsData.items[idx].statistics.likeCount || '';
-                                    }
-                                    html += `
-                                <div class="video-card animate-on-scroll" style="cursor:pointer; box-shadow: 0 8px 32px rgba(0,0,0,0.12); border-radius: 18px; overflow: hidden; transition: box-shadow 0.3s; background: #fff;">
-                                    <div class="video-thumbnail" style="border-radius: 18px 18px 0 0; overflow: hidden; position: relative;">
-                                        <img src="${thumbnail}" alt="${title}" style="border-radius: 18px 18px 0 0; width: 100%; height: 180px; object-fit: cover;">
-                                        <div class="play-btn" style="background:rgba(255,0,0,0.85);"><i class="fas fa-play"></i></div>
-                                    </div>
-                                    <div class="video-info" style="padding: 18px 18px 12px 18px; background: #fff;">
-                                        <h3 style="font-size:1.15rem; font-weight:600; color:#222; margin-bottom:10px; line-height:1.4;">${title}</h3>
-                                        <div class="video-meta" style="display:flex; justify-content:flex-start; gap:18px; align-items:center; font-size:0.98rem; color:#d32f2f; margin-bottom:8px;">
-                                            <span style="display:flex;align-items:center;gap:5px;"><i class='fas fa-eye'></i> <span style="color:#222;font-weight:500;">${views}</span> views</span>
-                                            <span style="display:flex;align-items:center;gap:5px;"><i class='fas fa-thumbs-up'></i> <span style="color:#222;font-weight:500;">${likes}</span> likes</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                                });
-                                grid.innerHTML = html;
-                                // Make each video card clickable
-                                grid.querySelectorAll('.video-card').forEach(card => {
-                                    const idx = Array.from(grid.children).indexOf(card);
-                                    const videoId = data.items[idx]?.id?.videoId;
-                                    if (videoId) {
-                                        card.addEventListener('click', function (e) {
-                                            // Prevent click on links inside card
-                                            if (e.target.tagName === 'A') return;
-                                            window.open('https://www.youtube.com/watch?v=' + videoId, '_blank');
-                                        });
-                                    }
-                                });
-                                setTimeout(() => {
-                                    animateOnScroll();
-                                }, 100);
+            // Show modal
+            adminLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                adminLoginModal.style.display = 'flex';
+                loginError.style.display = 'none';
+                adminLoginForm.reset();
+            });
 
-                                // Update tokens for pagination
-                                if (data.nextPageToken) {
-                                    // If moving forward, add token for next page
-                                    if (!pageTokens[currentPageIndex + 1] || pageTokens[currentPageIndex + 1] !== data.nextPageToken) {
-                                        pageTokens[currentPageIndex + 1] = data.nextPageToken;
-                                    }
-                                } else {
-                                    // If no next page, remove any extra tokens
-                                    pageTokens = pageTokens.slice(0, currentPageIndex + 1);
-                                }
-                                renderPagination();
-                            })
-                            .catch(err2 => {
-                                grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">Failed to load video stats.</p>';
-                                renderPagination();
-                                console.error(err2);
-                            });
-                    })
-                    .catch(err => {
-                        grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">Failed to load videos.</p>';
-                        renderPagination();
-                        console.error(err);
-                    });
-            }
+            // Hide modal
+            closeLoginModal.addEventListener('click', () => {
+                adminLoginModal.style.display = 'none';
+            });
 
-            // Initial fetch
-            pageTokens = [null];
-            currentPageIndex = 0;
-            fetchVideos(null);
+            // Hide modal on outside click
+            adminLoginModal.addEventListener('click', (e) => {
+                if (e.target === adminLoginModal) adminLoginModal.style.display = 'none';
+            });
+
+            // Simple login validation
+            adminLoginForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const name = document.getElementById('adminName').value.trim();
+                const pass = document.getElementById('adminPassword').value;
+
+                if (name === 'jaydip' && pass === '111111') {
+                    sessionStorage.setItem('adminLoggedIn', '1');
+                    window.open('admin.html', '_blank');
+                    adminLoginModal.style.display = 'none';
+                } else {
+                    loginError.textContent = 'Invalid name or password.';
+                    loginError.style.display = 'block';
+                }
+            });
+
+            // Initial animation check
+            animateOnScroll();
         });
     </script>
 </body>
