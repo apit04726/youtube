@@ -365,6 +365,7 @@
             }
             document.body.style.overflow = 'auto';
         }
+        
 
         // Like video function
         function likeVideo() {
@@ -523,12 +524,18 @@
             prevBtn.className = 'pagination-btn';
             prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i> <span>Previous</span>';
             prevBtn.disabled = currentPageIndex === 0;
-            prevBtn.addEventListener('click', () => {
-                if (currentPageIndex > 0) {
-                    currentPageIndex--;
-                    loadVideos(pageTokens[currentPageIndex]);
-                }
-            });
+                prevBtn.addEventListener('click', () => {
+                    if (currentPageIndex > 0) {
+                        currentPageIndex--;
+                        loadVideos(pageTokens[currentPageIndex]);
+                        setTimeout(() => {
+                            const watchNowBtn = document.querySelector('.watch-now-btn');
+                            if (watchNowBtn) {
+                                watchNowBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }, 300);
+                    }
+                });
 
             // Page info
             const pageInfo = document.createElement('span');
@@ -540,12 +547,18 @@
             nextBtn.className = 'pagination-btn';
             nextBtn.innerHTML = '<span>Next</span> <i class="fas fa-chevron-right"></i>';
             nextBtn.disabled = !pageTokens[currentPageIndex + 1];
-            nextBtn.addEventListener('click', () => {
-                if (pageTokens[currentPageIndex + 1]) {
-                    currentPageIndex++;
-                    loadVideos(pageTokens[currentPageIndex]);
-                }
-            });
+                nextBtn.addEventListener('click', () => {
+                    if (pageTokens[currentPageIndex + 1]) {
+                        currentPageIndex++;
+                        loadVideos(pageTokens[currentPageIndex]);
+                        setTimeout(() => {
+                            const watchNowBtn = document.querySelector('.watch-now-btn');
+                            if (watchNowBtn) {
+                                watchNowBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }, 300);
+                    }
+                });
 
             pagination.appendChild(prevBtn);
             pagination.appendChild(pageInfo);
