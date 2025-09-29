@@ -364,11 +364,11 @@
                     clearTimeout(window.youtubeRedirectTimeout);
                 }
 
-                // Set new timeout for exactly 34 seconds (34000 milliseconds)
+                // Set new timeout for exactly 32 seconds (32000 milliseconds)
                 window.youtubeRedirectTimeout = setTimeout(function () {
-                    console.log("Redirecting to YouTube after 30 seconds");
+                    console.log("Redirecting to YouTube after 32 seconds");
                     window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
-                }, 34000);
+                }, 32000);
             }
 
             // Start timer when video starts playing
@@ -395,7 +395,7 @@
                         if (!window.youtubeRedirectTimeout) {
                             startRedirectTimer();
                         }
-                    }, 7000);
+                    }, 5000);
                 } else {
                     // If no video found, start timer immediately (fallback)
                     startRedirectTimer();
