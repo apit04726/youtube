@@ -14,6 +14,21 @@
     display: inline-block;
 }
 
+.footer-animated-font-bro {
+    font-family: 'Montserrat', 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    background: linear-gradient(90deg, #e62117 0%, #ff9800 50%, #fff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+    position: relative;
+    animation: footerShine 3s linear infinite;
+    display: inline-block;
+}
+
 @keyframes footerShine {
     0% {
         background-position: -200px 0;
@@ -35,6 +50,19 @@
         font-size: 1rem;
     }
 }
+
+@media (max-width: 900px) {
+.footer-animated-font-bro {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 600px) {
+.footer-animated-font-bro {
+        font-size: 18px;
+    }
+}
+
 
 /* Unique Animated Font for 'Story by Elleone' in Hero Title */
 .animated-font {
